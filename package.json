@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "18.3.0-canary-56e20051c-20240311",
-    "react-dom": "18.3.0-canary-56e20051c-20240311"
+    "@tanstack/react-query": "^5.40.0",
+    "firebase": "^10.12.2",
+    "react": "^0.0.0-experimental-2f8f77602-20240229",
+    "react-dom": "^0.0.0-experimental-2f8f77602-20240229",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
