@@ -2,10 +2,12 @@ import { Outlet } from "react-router-dom";
 
 const PublicLayout = () => {
   return (
-    <div>
-      <h2>Public Layout</h2>
-      <Outlet />
-    </div>
+    <>
+      <section className="flex-center flex-1 py-10">
+        <Outlet />
+      </section>
+      <div className="hidden xl:block h-screen flex-1 bg-slate-900"></div>
+    </>
   );
 };
 
