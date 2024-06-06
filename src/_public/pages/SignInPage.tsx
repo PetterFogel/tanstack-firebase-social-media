@@ -1,10 +1,11 @@
 import { z } from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@/lib/validation/formSchemas";
+import { signInAccount } from "@/lib/firebase/firebase.utils";
 import {
   Form,
   FormItem,
@@ -15,6 +16,8 @@ import {
 } from "@/components/ui/form";
 
 const SignInPage = () => {
+  const navigate = useNavigate();
+
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -23,11 +26,15 @@ const SignInPage = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof signInSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof signInSchema>) => {
+    try {
+      const res = await signInAccount(values.email, values.password);
+      navigate("/");
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Form {...form}>

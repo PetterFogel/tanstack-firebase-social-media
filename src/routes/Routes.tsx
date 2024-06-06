@@ -3,11 +3,16 @@ import { createBrowserRouter } from "react-router-dom";
 import { SignInPage, SignUpPage } from "@/_public/pages";
 import PrivateLayout from "@/_private/PrivateLayout";
 import PublicLayout from "@/_public/PublicLayout";
+import PrivateRoute from "@/_private/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <PrivateLayout />,
+    element: (
+      <PrivateRoute>
+        <PrivateLayout />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "/",
