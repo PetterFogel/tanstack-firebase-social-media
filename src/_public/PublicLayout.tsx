@@ -2,9 +2,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PublicLayout = () => {
-  const { currentUser, isLoading } = useAuthContext();
-
-  if (isLoading) return <p>Loading...</p>;
+  const { currentUser } = useAuthContext();
 
   return (
     <>
