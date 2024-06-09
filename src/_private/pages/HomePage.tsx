@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { AuthContext } from "@/context/AuthContext";
+import { useAuthContext } from "@/context/AuthContext";
 import { signOutAccount } from "@/lib/firebase/firebase.utils";
-import { use } from "react";
 
 const HomePage = () => {
-  const { currentUser } = use(AuthContext);
+  const { currentUser } = useAuthContext();
   return (
     <section>
       <div>HomePage</div>

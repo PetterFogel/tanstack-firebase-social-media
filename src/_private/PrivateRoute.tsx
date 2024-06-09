@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "@/context/AuthContext";
-import { ReactElement, use } from "react";
+import { ReactElement } from "react";
+import { useAuthContext } from "@/context/AuthContext";
 
 const PrivateRoute = ({ children }: { children: ReactElement }) => {
-  const { currentUser, isLoading } = use(AuthContext);
+  const { currentUser, isLoading } = useAuthContext();
 
   if (isLoading) return <p>Loading...</p>;
 
