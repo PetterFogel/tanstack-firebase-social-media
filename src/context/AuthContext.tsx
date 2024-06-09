@@ -8,6 +8,7 @@ import {
   SetStateAction,
   useState,
   useEffect,
+  useContext,
 } from "react";
 
 interface ContextProps {
@@ -32,6 +33,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
   const value = { currentUser, isLoading, setCurrentUser };
 
   useEffect(() => {
+    console.log("TRIGGER");
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setCurrentUser(currentUser);
       setIsLoading(false);
@@ -44,3 +46,5 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export const useAuthContext = () => useContext(AuthContext);

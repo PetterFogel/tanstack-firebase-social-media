@@ -1,12 +1,11 @@
 import { z } from "zod";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/lib/validation/formSchemas";
 import { signUpFormValues } from "@/constants/formDefaultValues";
-import { Link, useNavigate } from "react-router-dom";
 import { createUserAccount } from "@/lib/firebase/firebase.utils";
 import {
   Form,
@@ -18,21 +17,13 @@ import {
 } from "@/components/ui/form";
 
 const SignUpPage = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: signUpFormValues,
   });
 
   const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
-    const res = await createUserAccount(values);
-
-    if (res?.user) {
-      toast({ title: "Success!", description: "Account created successfully" });
-      navigate("/sign-in");
-    }
+    await createUserAccount(values);
   };
 
   return (
@@ -90,7 +81,7 @@ const SignUpPage = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>

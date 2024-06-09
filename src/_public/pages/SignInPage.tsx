@@ -14,10 +14,9 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
 
 const SignInPage = () => {
-  const navigate = useNavigate();
-
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -28,11 +27,9 @@ const SignInPage = () => {
 
   const onSubmit = async (values: z.infer<typeof signInSchema>) => {
     try {
-      const res = await signInAccount(values.email, values.password);
-      navigate("/");
-      console.log(res);
+      await signInAccount(values.email, values.password);
     } catch (error) {
-      console.log(error);
+      toast({ title: "Wrong email or password." });
     }
   };
 
@@ -77,7 +74,7 @@ const SignInPage = () => {
           <p className="text-center">
             Don't have an account?
             <Link to="/sign-up" className="ml-1 underline">
-              Sign in
+              Sign up
             </Link>
           </p>
         </form>
