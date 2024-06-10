@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@/lib/validation/formSchemas";
-import { signInAccount } from "@/lib/firebase/firebase.utils";
+import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
 import {
   Form,
   FormItem,
@@ -14,11 +14,15 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "@/components/ui/use-toast";
+import Loader from "@/components/shared/Loader";
 
 const SignInPage = () => {
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+    useSignInAccount();
+
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
+    disabled: isSigningIn,
     defaultValues: {
       email: "",
       password: "",
@@ -26,11 +30,7 @@ const SignInPage = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof signInSchema>) => {
-    try {
-      await signInAccount(values.email, values.password);
-    } catch (error) {
-      toast({ title: "Wrong email or password." });
-    }
+    await signInAccount(values);
   };
 
   return (
@@ -68,7 +68,8 @@ const SignInPage = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="">
+          <Button type="submit" disabled={isSigningIn}>
+            {isSigningIn && <Loader isButton />}
             Sign in
           </Button>
           <p className="text-center">

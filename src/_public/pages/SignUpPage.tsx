@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/lib/validation/formSchemas";
 import { signUpFormValues } from "@/constants/formDefaultValues";
-import { createUserAccount } from "@/lib/firebase/firebase.utils";
+import { useCreateUserAccount } from "@/lib/react-query/queriesAndMutations";
 import {
   Form,
   FormItem,
@@ -15,11 +15,16 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import Loader from "@/components/shared/Loader";
 
 const SignUpPage = () => {
+  const { mutateAsync: createUserAccount, isPending: isCreating } =
+    useCreateUserAccount();
+
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: signUpFormValues,
+    disabled: isCreating,
   });
 
   const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
@@ -89,7 +94,8 @@ const SignUpPage = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="">
+          <Button type="submit" disabled={isCreating}>
+            {isCreating && <Loader isButton />}
             Sign up
           </Button>
 

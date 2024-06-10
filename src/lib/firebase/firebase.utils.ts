@@ -9,9 +9,17 @@ import {
   signOut,
 } from "firebase/auth";
 
-export const signInAccount = async (email: string, password: string) => {
-  if (!email || !password) return;
-  return await signInWithEmailAndPassword(auth, email, password);
+export const signInAccount = async (user: {
+  email: string;
+  password: string;
+}) => {
+  if (!user.email || !user.password) return;
+  try {
+    return await signInWithEmailAndPassword(auth, user.email, user.password);
+  } catch (error) {
+    console.error("Error signing in: ", error);
+    toast({ title: "Wrong email or password." });
+  }
 };
 
 export const signOutAccount = async () => signOut(auth);

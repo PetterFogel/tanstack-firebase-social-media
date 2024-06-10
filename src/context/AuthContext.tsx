@@ -33,7 +33,6 @@ export const AuthProvider: FC<Props> = ({ children }) => {
   const value = { currentUser, isLoading, setCurrentUser };
 
   useEffect(() => {
-    console.log("TRIGGER");
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setCurrentUser(currentUser);
       setIsLoading(false);
