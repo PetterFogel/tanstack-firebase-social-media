@@ -10,7 +10,13 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply  text-foreground font-inter;
+  }
+}
+
+@layer components {
+  input {
+    @apply bg-neutral-500
   }
 }
 
