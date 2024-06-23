@@ -1,4 +1,4 @@
-import { HomePage } from "@/_private/pages";
+import { ExplorePage, HomePage } from "@/_private/pages";
 import { createBrowserRouter } from "react-router-dom";
 import { SignInPage, SignUpPage } from "@/_public/pages";
 import PrivateLayout from "@/_private/PrivateLayout";
@@ -17,6 +17,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "explore",
+        element: <ExplorePage />,
       },
     ],
   },
