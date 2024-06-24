@@ -7,7 +7,6 @@ const App = () => {
   return (
     <main className="flex h-screen">
       <RouterProvider router={router} />
-      <Toaster />
     </main>
   );
 };
