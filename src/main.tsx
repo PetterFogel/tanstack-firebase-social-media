@@ -1,11 +1,11 @@
+import { Toaster } from "./components/ui/toaster.tsx";
+import { queryClient } from "./lib/react-query/client.ts";
 import { AuthProvider } from "./context/AuthContext.tsx";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { QueryClientProvider } from "@tanstack/react-query";
 import ReactDOM from "react-dom/client";
 import React from "react";
 import App from "./App.tsx";
-import { Toaster } from "./components/ui/toaster.tsx";
-
-const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -16,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Toaster />
         </>
       </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
 );
