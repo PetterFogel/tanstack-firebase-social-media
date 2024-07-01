@@ -1,21 +1,16 @@
-import { ISearchedBooks } from "@/types/books";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchSearchedBooks } from "../utils";
 
-export const useSearchBooks = (): UseMutationResult<
-  ISearchedBooks,
-  Error,
-  string
-> => {
-  return useMutation<ISearchedBooks, Error, string>({
-    mutationFn: async (searchQuery: string) => {
-      const url = `${
-        import.meta.env.VITE_GOOGLE_BOOKS_API_URL
-      }/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&key=${
-        import.meta.env.VITE_GOOGLE_BOOKS_API_KEY
-      }`;
+export const useSearchBooks = (searchQuery: string) => {
+  return useInfiniteQuery({
+    queryKey: ["searchBooks", searchQuery],
+    queryFn: fetchSearchedBooks,
+    getNextPageParam: (lastPage, pages) => {
+      const nextPage = pages.length * 10;
 
-      const response = await fetch(url);
-      return response.json();
+      return lastPage.totalItems > nextPage ? nextPage : undefined;
     },
+    enabled: !!searchQuery,
+    initialPageParam: 0,
   });
 };
