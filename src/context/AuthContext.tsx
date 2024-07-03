@@ -1,4 +1,6 @@
 import { auth } from "@/lib/firebase/firebase.config";
+import { DocumentData } from "firebase/firestore";
+import { getCurrentUserDoc } from "@/lib/firebase/firebase.utils";
 import { User, onAuthStateChanged } from "firebase/auth";
 import {
   createContext,
@@ -12,7 +14,7 @@ import {
 } from "react";
 
 interface ContextProps {
-  currentUser: User | null;
+  currentUser: DocumentData | null;
   isLoading: boolean;
   setCurrentUser: Dispatch<SetStateAction<User | null>>;
 }
@@ -28,13 +30,14 @@ interface Props {
 }
 
 export const AuthProvider: FC<Props> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<DocumentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const value = { currentUser, isLoading, setCurrentUser };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setCurrentUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      const user = await getCurrentUserDoc(authUser);
+      setCurrentUser(user || null);
       setIsLoading(false);
     });
 

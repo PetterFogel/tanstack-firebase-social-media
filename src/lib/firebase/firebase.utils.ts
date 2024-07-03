@@ -1,9 +1,10 @@
 import { toast } from "@/components/ui/use-toast";
 import { auth, db } from "./firebase.config";
 import { INewUser } from "@/types/user";
-import { doc, setDoc } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import {
+  User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -37,6 +38,7 @@ export const createUserAccount = async (userValues: INewUser) => {
 
     const userDocRef = doc(db, "users", user.uid);
     await setDoc(userDocRef, {
+      id: user.uid,
       name,
       email,
       username,
@@ -54,4 +56,14 @@ export const createUserAccount = async (userValues: INewUser) => {
       toast({ title: "Something went wrong..." });
     }
   }
+};
+
+export const getCurrentUserDoc = async (authUser: User | null) => {
+  if (!authUser) return;
+  const userDoc = doc(db, "users", authUser?.uid);
+  const userDocSnap = await getDoc(userDoc);
+
+  if (!userDocSnap.exists()) return;
+  const userData = userDocSnap.data();
+  return userData;
 };
