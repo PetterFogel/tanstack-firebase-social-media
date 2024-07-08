@@ -1,8 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { useInView } from "react-intersection-observer";
+import { LoaderCircle } from "lucide-react";
 import { useSearchBooks } from "@/lib/react-query/mutations";
-import { Image, LoaderCircle } from "lucide-react";
 import { useState, ChangeEvent, useEffect } from "react";
+import GridBookList from "@/components/shared/GridBookList";
 import useDebounce from "@/hooks/useDebounce";
 
 const ExplorePage = () => {
@@ -29,7 +30,7 @@ const ExplorePage = () => {
   }, [inView, fetchNextPage, hasNextPage]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto py-4 md:py-8 mb-10">
+    <div className="w-full max-w-5xl mx-auto p-4 md:py-8 mb-10">
       <div className="space-y-8 md:space-y-12">
         <h2 className="text-3xl font-bold">Search Books</h2>
         <form onSubmit={handleFormSubmit}>
@@ -47,30 +48,10 @@ const ExplorePage = () => {
         )}
         {data?.pages?.[0]?.totalItems === 0 && <p>No results found.</p>}
         {data?.pages && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {data.pages?.map((page, pageIndex) =>
-              page.items?.map((item, idx) => (
-                <div
-                  key={`${pageIndex}-${idx}`}
-                  className="bg-white shadow-md rounded-lg flex flex-col"
-                >
-                  {item.volumeInfo.imageLinks?.thumbnail ? (
-                    <img
-                      src={item.volumeInfo.imageLinks.thumbnail}
-                      alt={item.volumeInfo.title}
-                      className="w-full h-auto object-cover flex-grow"
-                    />
-                  ) : (
-                    <div className="w-full flex-center flex-grow min-h-64 bg-neutral-300">
-                      <Image className="h-8 w-8" />
-                    </div>
-                  )}
-                  <h3 className="text-sm sm:text-md font-semibold p-4">
-                    {item.volumeInfo.title}
-                  </h3>
-                </div>
-              ))
-            )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {data.pages?.map((page, pageIndex) => (
+              <GridBookList key={pageIndex} books={page} />
+            ))}
           </div>
         )}
         {hasNextPage && (
