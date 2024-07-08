@@ -11,7 +11,7 @@ const leftSideMenuLinks = [
     svgIcon: <HomeIcon size={16} />,
   },
   {
-    route: "/Explore",
+    route: "/explore",
     label: "Explore",
     svgIcon: <SearchIcon size={16} />,
   },
@@ -22,19 +22,19 @@ const LeftSideMenu = () => {
   const { currentUser } = useAuthContext();
 
   return (
-    <nav className="hidden md:flex px-3 py-10 flex-col justify-between min-w-[270px] border-x">
+    <nav className="hidden md:flex px-3 py-10 flex-col justify-between min-w-[180px] xl:min-w-[270px] border-x">
       <div className="flex flex-col gap-11">
         {currentUser && (
           <Link
             to={`/profile/${currentUser.id}`}
             className="flex gap-3 items-center"
           >
-            <div className="bg-green-400 rounded-full h-14 w-14 flex-center">
+            <div className="bg-green-400 rounded-full h-10 w-10 xl:h-14 xl:w-14 flex-center">
               <UserRound size={30} />
             </div>
             <div className="flex flex-col">
-              <p className="font-bold text-lg">{currentUser.name}</p>
-              <p className="text-sm text-light-3">@{currentUser.username}</p>
+              <p className="font-bold text-sm xl:text-lg">{currentUser.name}</p>
+              <p className="text-xs xl:text-sm">@{currentUser.username}</p>
             </div>
           </Link>
         )}
@@ -46,10 +46,10 @@ const LeftSideMenu = () => {
               return (
                 <li
                   key={link.label}
-                  className={`rounded-lg font-medium transition group ${
+                  className={`rounded-lg lg:text-base font-medium transition group ${
                     isActive
                       ? "bg-slate-900 text-white hover:text-white hover:bg-slate-800"
-                      : "hover:bg-gray-100 hover:text-slate-900"
+                      : "hover:bg-gray-100 "
                   }`}
                 >
                   <NavLink

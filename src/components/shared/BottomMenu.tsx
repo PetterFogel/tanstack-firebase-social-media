@@ -18,7 +18,7 @@ const BottomMenu = () => {
   const { pathname } = useLocation();
 
   return (
-    <section className="z-50 border-t flex-between bg-white w-full sticky bottom-0 p-4 md:hidden">
+    <section className="z-50 border-t flex-between bg-white w-full fixed bottom-0 p-4 md:hidden">
       {bottomMenuLinks.map((link, idx) => {
         const isActive = pathname === link.route;
         return (
