@@ -1,9 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
 import { SignInPage, SignUpPage } from "@/_public/pages";
-import { ExplorePage, HomePage, ProfilePage } from "@/_private/pages";
 import PrivateLayout from "@/_private/PrivateLayout";
-import PublicLayout from "@/_public/PublicLayout";
 import PrivateRoute from "@/_private/PrivateRoute";
+import PublicLayout from "@/_public/PublicLayout";
+import {
+  BookDetailsPage,
+  ExplorePage,
+  ProfilePage,
+  HomePage,
+} from "@/_private/pages";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "profile/:id",
         element: <ProfilePage />,
+      },
+      {
+        path: "book/:bookId",
+        element: <BookDetailsPage />,
       },
     ],
   },

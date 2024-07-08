@@ -4,6 +4,7 @@ import { fetchSearchedBooks } from "../utils";
 import { INewUser } from "@/types/user";
 import { useMutation } from "@tanstack/react-query";
 import { createUserAccount, signInAccount } from "../firebase/firebase.utils";
+import { QUERY_KEYS } from "./queryKeys";
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -23,7 +24,7 @@ export const useSignInAccount = () => {
 
 export const useSearchBooks = (searchQuery: string) => {
   return useInfiniteQuery({
-    queryKey: ["searchBooks", searchQuery],
+    queryKey: [QUERY_KEYS.SEARCHED_BOOKS, searchQuery],
     queryFn: fetchSearchedBooks,
     getNextPageParam: (lastPage, pages) => {
       const nextPage = pages.length * 10;
