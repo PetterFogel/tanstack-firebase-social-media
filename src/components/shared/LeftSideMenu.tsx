@@ -22,7 +22,7 @@ const LeftSideMenu = () => {
   const { currentUser } = useAuthContext();
 
   return (
-    <nav className="hidden md:flex px-3 py-10 flex-col justify-between min-w-[180px] xl:min-w-[270px] border-x">
+    <nav className="hidden md:flex px-3 py-10 flex-col justify-between min-w-[180px] xl:min-w-[270px] border-x bg-white">
       <div className="flex flex-col gap-11">
         {currentUser && (
           <Link

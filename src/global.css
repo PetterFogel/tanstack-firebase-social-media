@@ -10,7 +10,7 @@
     @apply border-border;
   }
   body {
-    @apply  text-foreground font-inter;
+    @apply  text-foreground font-inter bg-slate-50;
   }
 }
 

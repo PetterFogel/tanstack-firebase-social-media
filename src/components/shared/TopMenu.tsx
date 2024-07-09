@@ -8,7 +8,7 @@ const TopMenu = () => {
   const { currentUser } = useAuthContext();
 
   return (
-    <header className="md:hidden w-full border-b">
+    <header className="md:hidden w-full border-b bg-white">
       <div className="flex-between py-2 px-4">
         <Link to="/" className="font-bold text-base">
           Logo
