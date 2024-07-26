@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const fetchSearchedBooks = async ({
+export const getSearchedBooks = async ({
   pageParam = 0,
   queryKey,
 }: {
@@ -27,7 +27,7 @@ export const fetchSearchedBooks = async ({
   return response.json();
 };
 
-export const fetchSpecificBook = async (
+export const getSpecificBook = async (
   bookId: string
 ): Promise<ISearchedBook> => {
   const url = `${

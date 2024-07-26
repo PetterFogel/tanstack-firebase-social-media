@@ -26,7 +26,7 @@ const GridBookList = ({ books }: Props) => {
               <Image className="h-8 w-8" />
             </div>
           )}
-          <h3 className="text-xs sm:text-sm font-semibold p-4">
+          <h3 className="text-[10px] sm:text-xs font-semibold py-3 px-2">
             {item.volumeInfo.title}
           </h3>
         </Link>

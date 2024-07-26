@@ -1,10 +1,16 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchSearchedBooks } from "../utils";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { getSearchedBooks } from "../utils";
 
 import { INewUser } from "@/types/user";
 import { useMutation } from "@tanstack/react-query";
-import { createUserAccount, signInAccount } from "../firebase/firebase.utils";
+import {
+  addBookToUserBookShelf,
+  createUserAccount,
+  removeBookFromShelf,
+  signInAccount,
+} from "../firebase/firebase.utils";
 import { QUERY_KEYS } from "./queryKeys";
+import { IManageBook } from "@/types/books";
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -25,7 +31,7 @@ export const useSignInAccount = () => {
 export const useSearchBooks = (searchQuery: string) => {
   return useInfiniteQuery({
     queryKey: [QUERY_KEYS.SEARCHED_BOOKS, searchQuery],
-    queryFn: fetchSearchedBooks,
+    queryFn: getSearchedBooks,
     getNextPageParam: (lastPage, pages) => {
       const nextPage = pages.length * 10;
 
@@ -33,5 +39,39 @@ export const useSearchBooks = (searchQuery: string) => {
     },
     enabled: !!searchQuery,
     initialPageParam: 0,
+  });
+};
+
+export const useAddBookToShelf = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ bookId, userId }: IManageBook) =>
+      addBookToUserBookShelf(bookId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_EXISTS_IN_SHELF],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_SHELF_BOOKS],
+      });
+    },
+  });
+};
+
+export const useRemoveBookFromShelf = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ bookId, userId }: IManageBook) =>
+      removeBookFromShelf(bookId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_EXISTS_IN_SHELF],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_SHELF_BOOKS],
+      });
+    },
   });
 };

@@ -20,3 +20,8 @@ export interface ISearchedBooks {
   totalItems: number;
   kind: string;
 }
+
+export interface IManageBook {
+  bookId: string;
+  userId: string;
+}
