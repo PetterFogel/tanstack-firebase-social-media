@@ -93,13 +93,16 @@ export const addBookToUserBookShelf = async (book: IBook, userId: string) => {
           categories: book.volumeInfo.authors,
           description: book.volumeInfo.description,
           imageLinks: {
-            thumbnail: book.volumeInfo.imageLinks?.thumbnail,
-            smallThumbnail: book.volumeInfo.imageLinks?.smallThumbnail,
+            thumbnail: book.volumeInfo.imageLinks?.thumbnail || "",
+            smallThumbnail: book.volumeInfo.imageLinks?.smallThumbnail || "",
           },
           pageCount: book.volumeInfo.pageCount,
           publisher: book.volumeInfo.publisher,
           publishedDate: book.volumeInfo.publishedDate,
         },
+        userId,
+        addedAt: new Date(),
+        updatedAt: new Date(),
       }),
       updatedAt: new Date(),
     });

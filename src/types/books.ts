@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface IBook {
   id: string;
   volumeInfo: {
@@ -13,6 +15,10 @@ export interface IBook {
     publisher: string;
     publishedDate: string;
   };
+  userId: string;
+  rating: number;
+  addedAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 export interface ISearchedBooks {
