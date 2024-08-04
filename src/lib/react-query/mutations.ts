@@ -1,6 +1,5 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { getSearchedBooks } from "../utils";
-
 import { INewUser } from "@/types/user";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -10,7 +9,7 @@ import {
   signInAccount,
 } from "../firebase/firebase.utils";
 import { QUERY_KEYS } from "./queryKeys";
-import { IManageBook } from "@/types/books";
+import { IBook, IManageBook } from "@/types/books";
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -46,14 +45,14 @@ export const useAddBookToShelf = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ bookId, userId }: IManageBook) =>
-      addBookToUserBookShelf(bookId, userId),
+    mutationFn: ({ book, userId }: { book: IBook; userId: string }) =>
+      addBookToUserBookShelf(book, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.BOOK_EXISTS_IN_SHELF],
       });
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.BOOK_SHELF_BOOKS],
+        queryKey: [QUERY_KEYS.USER_BOOK_SHELF],
       });
     },
   });
@@ -70,7 +69,7 @@ export const useRemoveBookFromShelf = () => {
         queryKey: [QUERY_KEYS.BOOK_EXISTS_IN_SHELF],
       });
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.BOOK_SHELF_BOOKS],
+        queryKey: [QUERY_KEYS.USER_BOOK_SHELF],
       });
     },
   });

@@ -4,14 +4,15 @@ import {
 } from "@/lib/react-query/mutations";
 import { Button } from "../ui/button";
 import { Album, BookCheck, LoaderCircle } from "lucide-react";
+import { IBook } from "@/types/books";
 
 interface Props {
   bookExist: boolean | undefined;
-  bookId: string;
+  book: IBook;
   userId: string;
 }
 
-const BookshelfButton = ({ bookExist, bookId, userId }: Props) => {
+const BookshelfButton = ({ bookExist, book, userId }: Props) => {
   const { mutateAsync: addBookToShelf, isPending: isAdding } =
     useAddBookToShelf();
 
@@ -19,13 +20,13 @@ const BookshelfButton = ({ bookExist, bookId, userId }: Props) => {
     useRemoveBookFromShelf();
 
   const addBookToShelfHandler = () => {
-    if (!bookId || !userId) return;
-    addBookToShelf({ bookId, userId });
+    if (!book.id || !userId) return;
+    addBookToShelf({ book, userId });
   };
 
   const removeBookHandler = async () => {
-    if (!bookId || !userId) return;
-    removeBookFromShelf({ bookId, userId });
+    if (!book.id || !userId) return;
+    removeBookFromShelf({ bookId: book.id, userId });
   };
 
   return (

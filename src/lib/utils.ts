@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
-import { ISearchedBook, ISearchedBooks } from "@/types/books";
+import { IBook, ISearchedBooks } from "@/types/books";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -27,9 +27,7 @@ export const getSearchedBooks = async ({
   return response.json();
 };
 
-export const getSpecificBook = async (
-  bookId: string
-): Promise<ISearchedBook> => {
+export const getSpecificBook = async (bookId: string): Promise<IBook> => {
   const url = `${
     import.meta.env.VITE_GOOGLE_BOOKS_API_URL
   }/books/v1/volumes/${bookId}?key=${

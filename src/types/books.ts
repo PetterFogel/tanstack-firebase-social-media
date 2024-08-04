@@ -1,4 +1,4 @@
-export interface ISearchedBook {
+export interface IBook {
   id: string;
   volumeInfo: {
     title: string;
@@ -16,7 +16,7 @@ export interface ISearchedBook {
 }
 
 export interface ISearchedBooks {
-  items: ISearchedBook[];
+  items: IBook[];
   totalItems: number;
   kind: string;
 }

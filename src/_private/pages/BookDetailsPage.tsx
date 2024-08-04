@@ -65,8 +65,8 @@ const BookDetailsPage = () => {
               {book.id && currentUser?.id && (
                 <BookshelfButton
                   bookExist={bookExist}
-                  bookId={book.id}
                   userId={currentUser.id}
+                  book={book}
                 />
               )}
             </div>
