@@ -30,8 +30,8 @@ const BottomMenu = () => {
           <Link
             key={idx}
             to={link.route}
-            className={`rounded-lg text-xs transition group flex-center flex-col ${
-              isActive ? "text-slate-900 font-bold" : "text-slate-600"
+            className={`rounded-lg text-xs transition group flex-center flex-col font-bold ${
+              isActive ? "text-slate-900" : "text-slate-600"
             }`}
           >
             {link.svgIcon}

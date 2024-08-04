@@ -4,6 +4,7 @@ import { LoaderCircle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useGetUserBookshelfBooks } from "@/lib/react-query/queries";
 import { useAuthContext } from "@/context/AuthContext";
+import { sortBooksByAddedDate } from "@/lib/utils";
 
 const ProfilePage = () => {
   const { userId } = useParams();
@@ -12,12 +13,7 @@ const ProfilePage = () => {
     userId || ""
   );
 
-  const sortedBooksbyDate = books?.sort((a: IBook, b: IBook) => {
-    return (
-      new Date(b.addedAt.toDate()).getTime() -
-      new Date(a.addedAt.toDate()).getTime()
-    );
-  });
+  const sortedBooksbyDate = sortBooksByAddedDate(books);
 
   return (
     <section className="w-full max-w-5xl mx-auto p-4 md:py-8 mb-10">

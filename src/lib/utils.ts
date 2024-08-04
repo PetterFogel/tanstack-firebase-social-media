@@ -40,3 +40,11 @@ export const getSpecificBook = async (bookId: string): Promise<IBook> => {
   }
   return response.json();
 };
+
+export const sortBooksByAddedDate = (books: IBook[]) =>
+  books?.sort((a: IBook, b: IBook) => {
+    return (
+      new Date(b.addedAt.toDate()).getTime() -
+      new Date(a.addedAt.toDate()).getTime()
+    );
+  });
