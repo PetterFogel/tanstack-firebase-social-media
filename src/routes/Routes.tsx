@@ -8,6 +8,7 @@ import {
   ExplorePage,
   ProfilePage,
   HomePage,
+  BookshelfPage,
 } from "@/_private/pages";
 
 export const router = createBrowserRouter([
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
       {
         path: "book/:bookId",
         element: <BookDetailsPage />,
+      },
+      {
+        path: "bookshelf",
+        element: <BookshelfPage />,
       },
     ],
   },

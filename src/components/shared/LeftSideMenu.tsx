@@ -2,7 +2,13 @@ import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/context/AuthContext";
 import { signOutAccount } from "@/lib/firebase/firebase.utils";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { HomeIcon, LogOut, SearchIcon, UserRound } from "lucide-react";
+import {
+  HomeIcon,
+  LibraryBig,
+  LogOut,
+  SearchIcon,
+  UserRound,
+} from "lucide-react";
 
 const leftSideMenuLinks = [
   {
@@ -14,6 +20,11 @@ const leftSideMenuLinks = [
     route: "/explore",
     label: "Explore",
     svgIcon: <SearchIcon size={16} />,
+  },
+  {
+    route: "/bookshelf",
+    label: "Bookshelf",
+    svgIcon: <LibraryBig size={16} />,
   },
 ];
 

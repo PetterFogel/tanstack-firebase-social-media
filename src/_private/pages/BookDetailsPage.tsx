@@ -40,6 +40,12 @@ const BookDetailsPage = () => {
     );
   }
 
+  const htmlRemoveRegex = /(<([^>]+)>)/gi;
+  const formatedDescription = book?.volumeInfo.description?.replace(
+    htmlRemoveRegex,
+    ""
+  );
+
   return (
     <div className="w-full max-w-5xl mx-auto h-full md:py-8">
       {book && (
@@ -87,9 +93,7 @@ const BookDetailsPage = () => {
                 {book.volumeInfo.pageCount} pages
               </h3>
             </div>
-            <p className="mt-2 text-xs lg:text-sm">
-              {book.volumeInfo.description}
-            </p>
+            <p className="mt-2 text-xs lg:text-sm">{formatedDescription}</p>
           </div>
         </div>
       )}

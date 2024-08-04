@@ -1,15 +1,17 @@
 import { Link } from "react-router-dom";
 import { Image } from "lucide-react";
-import { ISearchedBooks } from "@/types/books";
+import { IBook, ISearchedBooks } from "@/types/books";
 
 interface Props {
-  books: ISearchedBooks;
+  books: ISearchedBooks | IBook[];
 }
 
 const GridBookList = ({ books }: Props) => {
+  const data = "items" in books ? books.items : books;
+
   return (
     <>
-      {books.items?.map((item, idx) => (
+      {data?.map((item: IBook, idx: number) => (
         <Link
           key={idx}
           to={`/book/${item.id}`}

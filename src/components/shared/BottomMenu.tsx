@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { HomeIcon, SearchIcon } from "lucide-react";
+import { HomeIcon, LibraryBig, SearchIcon } from "lucide-react";
 
 const bottomMenuLinks = [
   {
@@ -11,6 +11,11 @@ const bottomMenuLinks = [
     route: "/Explore",
     label: "Explore",
     svgIcon: <SearchIcon size={16} />,
+  },
+  {
+    route: "/bookshelf",
+    label: "Bookshelf",
+    svgIcon: <LibraryBig size={16} />,
   },
 ];
 
