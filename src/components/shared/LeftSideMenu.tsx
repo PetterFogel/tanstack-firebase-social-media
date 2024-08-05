@@ -8,6 +8,7 @@ import {
   LogOut,
   SearchIcon,
   UserRound,
+  UsersRound,
 } from "lucide-react";
 
 const leftSideMenuLinks = [
@@ -25,6 +26,11 @@ const leftSideMenuLinks = [
     route: "/bookshelf",
     label: "Bookshelf",
     svgIcon: <LibraryBig size={16} />,
+  },
+  {
+    route: "/people",
+    label: "People",
+    svgIcon: <UsersRound size={16} />,
   },
 ];
 

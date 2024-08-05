@@ -2,23 +2,31 @@ import { Image, UserRound } from "lucide-react";
 import { IBook } from "@/types/books";
 import { LoaderCircle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { useGetUserBookshelfBooks } from "@/lib/react-query/queries";
 import { useAuthContext } from "@/context/AuthContext";
+import { useGetUserBookshelf } from "@/lib/react-query/queries";
 import { sortBooksByAddedDate } from "@/lib/utils";
 
 const ProfilePage = () => {
   const { userId } = useParams();
   const { currentUser } = useAuthContext();
-  const { data: books, isPending: isBooksLoading } = useGetUserBookshelfBooks(
+  const { data: bookshelf, isFetching: isBooksLoading } = useGetUserBookshelf(
     userId || ""
   );
 
-  const sortedBooksbyDate = sortBooksByAddedDate(books);
+  const sortedBooksbyDate = sortBooksByAddedDate(bookshelf?.books);
+  const isCurrentUser = currentUser?.id === bookshelf?.user?.id;
+  const username = bookshelf?.user?.username;
 
   return (
     <section className="w-full max-w-5xl mx-auto p-4 md:py-8 mb-10">
       <div className="space-y-8 md:space-y-12">
-        <h2 className="text-3xl font-bold">Your Profile</h2>
+        <h2
+          className={`text-3xl font-bold ${
+            isBooksLoading && "text-transparent"
+          }`}
+        >
+          {isCurrentUser ? "Your" : `${username}'s`} Profile
+        </h2>
         {isBooksLoading ? (
           <div className="flex-center h-full">
             <LoaderCircle className="h-16 w-16 animate-spin" />
@@ -40,7 +48,7 @@ const ProfilePage = () => {
                   )}
                 </div>
                 <div className="space-y-2 w-full">
-                  {currentUser?.id === userId ? (
+                  {isCurrentUser ? (
                     <h3 className="text-xs md:text-base">
                       You have added{" "}
                       <span className="font-bold">{item.volumeInfo.title}</span>{" "}
@@ -48,8 +56,7 @@ const ProfilePage = () => {
                     </h3>
                   ) : (
                     <h3 className="text-xs md:text-sm">
-                      <span className="font-bold">{currentUser?.username}</span>{" "}
-                      has added{" "}
+                      <span className="font-bold">{username}</span> has added{" "}
                       <span className="font-bold">{item.volumeInfo.title}</span>{" "}
                       to the shelf
                     </h3>

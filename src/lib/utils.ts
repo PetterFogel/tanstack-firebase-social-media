@@ -41,7 +41,7 @@ export const getSpecificBook = async (bookId: string): Promise<IBook> => {
   return response.json();
 };
 
-export const sortBooksByAddedDate = (books: IBook[]) =>
+export const sortBooksByAddedDate = (books: IBook[] | undefined) =>
   books?.sort((a: IBook, b: IBook) => {
     return (
       new Date(b.addedAt.toDate()).getTime() -

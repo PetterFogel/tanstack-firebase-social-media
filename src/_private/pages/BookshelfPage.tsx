@@ -1,16 +1,16 @@
 import { LoaderCircle } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { useGetUserBookshelfBooks } from "@/lib/react-query/queries";
-import GridBookList from "@/components/shared/GridBookList";
+import { useGetUserBookshelf } from "@/lib/react-query/queries";
 import { sortBooksByAddedDate } from "@/lib/utils";
+import GridBookList from "@/components/shared/GridBookList";
 
 const BookshelfPage = () => {
   const { currentUser } = useAuthContext();
-  const { data: books, isPending: isBooksLoading } = useGetUserBookshelfBooks(
+  const { data: bookshelf, isPending: isBooksLoading } = useGetUserBookshelf(
     currentUser?.id || ""
   );
 
-  const sortedBooksbyDate = sortBooksByAddedDate(books);
+  const sortedBooksbyDate = sortBooksByAddedDate(bookshelf?.books);
 
   return (
     <section className="w-full max-w-5xl mx-auto p-4 md:py-8 mb-10">
@@ -22,7 +22,7 @@ const BookshelfPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <GridBookList books={sortedBooksbyDate} />
+            <GridBookList books={sortedBooksbyDate || []} />
           </div>
         )}
       </div>

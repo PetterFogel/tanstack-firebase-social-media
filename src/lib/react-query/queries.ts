@@ -3,7 +3,8 @@ import { getSpecificBook } from "../utils";
 import { QUERY_KEYS } from "./queryKeys";
 import {
   checkIfBookExistsInShelf,
-  getUserBookshelfBooks,
+  getUserBookshelf,
+  getUsers,
 } from "../firebase/firebase.utils";
 
 export const useGetSpecificBook = (bookId: string) => {
@@ -22,9 +23,16 @@ export const useCheckIfBookExistInShelf = (bookId: string, userId: string) => {
   });
 };
 
-export const useGetUserBookshelfBooks = (userId: string) => {
+export const useGetUserBookshelf = (userId: string) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.USER_BOOK_SHELF],
-    queryFn: () => getUserBookshelfBooks(userId),
+    queryKey: [QUERY_KEYS.USER_BOOK_SHELF, userId],
+    queryFn: () => getUserBookshelf(userId),
+  });
+};
+
+export const useGetUsers = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.USERS],
+    queryFn: () => getUsers(),
   });
 };

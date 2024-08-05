@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { HomeIcon, LibraryBig, SearchIcon } from "lucide-react";
+import { HomeIcon, LibraryBig, SearchIcon, UsersRound } from "lucide-react";
 
 const bottomMenuLinks = [
   {
@@ -17,6 +17,11 @@ const bottomMenuLinks = [
     label: "Bookshelf",
     svgIcon: <LibraryBig size={16} />,
   },
+  {
+    route: "/people",
+    label: "People",
+    svgIcon: <UsersRound size={16} />,
+  },
 ];
 
 const BottomMenu = () => {
@@ -31,7 +36,7 @@ const BottomMenu = () => {
             key={idx}
             to={link.route}
             className={`rounded-lg text-xs transition group flex-center flex-col font-bold ${
-              isActive ? "text-slate-900" : "text-slate-600"
+              !isActive && "text-slate-500"
             }`}
           >
             {link.svgIcon}

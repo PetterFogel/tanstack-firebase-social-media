@@ -1,8 +1,15 @@
 import { toast } from "@/components/ui/use-toast";
 import { auth, db } from "./firebase.config";
-import { INewUser } from "@/types/user";
 import { FirebaseError } from "firebase/app";
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import {
   User,
   createUserWithEmailAndPassword,
@@ -10,6 +17,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { IBook } from "@/types/books";
+import { INewUser, IUser } from "@/types/user";
 
 export const signInAccount = async (user: {
   email: string;
@@ -61,13 +69,19 @@ export const createUserAccount = async (userValues: INewUser) => {
   }
 };
 
-export const getCurrentUserDoc = async (authUser: User | null) => {
-  if (!authUser) return;
-  const userDoc = doc(db, "users", authUser?.uid);
+export const getUserDoc = async (userId: string) => {
+  const userDoc = doc(db, "users", userId);
   const userDocSnap = await getDoc(userDoc);
 
   if (!userDocSnap.exists()) return;
-  const userData = userDocSnap.data();
+  const userData = userDocSnap.data() as IUser;
+  return userData;
+};
+
+export const getCurrentUserDoc = async (authUser: User | null) => {
+  if (!authUser) return;
+  const userData = await getUserDoc(authUser.uid);
+
   return userData;
 };
 
@@ -113,23 +127,27 @@ export const addBookToUserBookShelf = async (book: IBook, userId: string) => {
   }
 };
 
-export const getUserBookshelfBooks = async (userId: string) => {
+export const getUserBookshelf = async (userId: string) => {
   const bookshelfDocRef = doc(db, "bookshelf", userId);
   const bookshelfDocSnap = await getDoc(bookshelfDocRef);
 
-  if (!bookshelfDocSnap.exists()) return;
+  const user = await getUserDoc(userId);
 
+  if (!bookshelfDocSnap.exists()) return;
   const bookshelfData = bookshelfDocSnap.data();
-  return bookshelfData.books || [];
+  const books = bookshelfData.books as IBook[];
+
+  const bookshelf = { user, books };
+  return bookshelf;
 };
 
 export const checkIfBookExistsInShelf = async (
   bookId: string,
   userId: string
 ) => {
-  const books = await getUserBookshelfBooks(userId);
+  const bookshelf = await getUserBookshelf(userId);
 
-  const bookExists = books.some((book: IBook) => book.id === bookId);
+  const bookExists = bookshelf?.books.some((book: IBook) => book.id === bookId);
   return bookExists;
 };
 
@@ -155,4 +173,14 @@ export const removeBookFromShelf = async (bookId: string, userId: string) => {
     console.error("Error removing book from user bookshelf: ", error);
     toast({ title: "Couldn't remove book right now." });
   }
+};
+
+export const getUsers = async () => {
+  const usersCollection = collection(db, "users");
+  const usersSnapshot = await getDocs(usersCollection);
+  const usersList = usersSnapshot.docs.map((doc) => ({
+    ...doc.data(),
+  }));
+
+  return usersList;
 };
