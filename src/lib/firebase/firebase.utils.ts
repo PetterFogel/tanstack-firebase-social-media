@@ -2,6 +2,7 @@ import { toast } from "@/components/ui/use-toast";
 import { auth, db } from "./firebase.config";
 import { FirebaseError } from "firebase/app";
 import {
+  arrayRemove,
   arrayUnion,
   collection,
   doc,
@@ -18,6 +19,7 @@ import {
 } from "firebase/auth";
 import { IBook } from "@/types/books";
 import { INewUser, IUser } from "@/types/user";
+import { get } from "react-hook-form";
 
 export const signInAccount = async (user: {
   email: string;
@@ -182,5 +184,84 @@ export const getUsers = async () => {
     ...doc.data(),
   }));
 
-  return usersList;
+  return usersList as IUser[];
+};
+
+export const followUser = async (userId: string, followerId: string) => {
+  const userDocRef = doc(db, "users", userId);
+
+  const followedUserDocRef = doc(db, "users", followerId);
+  const followedUserDocSnap = await getDoc(followedUserDocRef);
+
+  if (!followedUserDocSnap.exists()) return;
+
+  const followedUsername = followedUserDocSnap.data().name || "";
+
+  try {
+    await updateDoc(userDocRef, {
+      following: arrayUnion(followerId),
+    });
+    await updateDoc(followedUserDocRef, {
+      followers: arrayUnion(userId),
+    });
+
+    toast({ title: `You are now following ${followedUsername}!` });
+  } catch (error) {
+    console.error("Error following user: ", error);
+    toast({ title: "Couldn't follow user right now." });
+  }
+};
+
+export const unfollowUser = async (userId: string, followerId: string) => {
+  const userDocRef = doc(db, "users", userId);
+
+  const userDocSnap = await getDoc(userDocRef);
+  if (!userDocSnap.exists()) return;
+
+  const currentFollowingList = userDocSnap.data().following || [];
+  const updatedFollowingList = currentFollowingList.filter(
+    (id: string) => id !== followerId
+  );
+
+  const unfollowedUserDocRef = doc(db, "users", followerId);
+  const unfollowedUserDocSnap = await getDoc(unfollowedUserDocRef);
+  if (!unfollowedUserDocSnap.exists()) return;
+
+  const currentFollowersList = unfollowedUserDocSnap.data().followers || [];
+  const updatedFollowersList = currentFollowersList.filter(
+    (id: string) => id !== userId
+  );
+
+  const unfollowingUsername = unfollowedUserDocSnap.data().name || "";
+
+  try {
+    await updateDoc(userDocRef, {
+      following: updatedFollowingList,
+    });
+
+    await updateDoc(unfollowedUserDocRef, {
+      followers: updatedFollowersList,
+    });
+
+    toast({ title: `You unfollowed ${unfollowingUsername}.` });
+  } catch (error) {
+    console.error("Error unfollowing user: ", error);
+    toast({ title: "Couldn't unfollow user right now." });
+  }
+};
+
+export const checkIfUserIsFollowing = async (
+  userId: string,
+  followerId: string
+) => {
+  const userDocRef = doc(db, "users", userId);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (!userDocSnap.exists()) return;
+
+  const userData = userDocSnap.data();
+  const following = userData.following || [];
+
+  const isFollowing = following.includes(followerId);
+  return isFollowing;
 };

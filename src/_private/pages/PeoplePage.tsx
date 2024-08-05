@@ -1,7 +1,8 @@
 import { useGetUsers } from "@/lib/react-query/queries";
+import { LoaderCircle } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
-import { LoaderCircle, UserRound } from "lucide-react";
-import { Link } from "react-router-dom";
+import UserItem from "@/components/shared/UserListItem";
+import { IUser } from "@/types/user";
 
 const PeoplePage = () => {
   const { currentUser } = useAuthContext();
@@ -19,23 +20,14 @@ const PeoplePage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredUsers?.map((user, idx) => (
-              <div
-                key={idx}
-                className="flex gap-3 items-center flex-col bg-white shadow-md p-4 rounded-lg"
-              >
-                <Link
-                  to={`/profile/${user.id}`}
-                  className="flex-center flex-col"
-                >
-                  <div className="bg-green-400 rounded-full h-10 w-10 xl:h-14 xl:w-14 flex-center">
-                    <UserRound size={30} />
-                  </div>
-                  <p className="font-bold text-sm xl:text-lg">{user.name}</p>
-                </Link>
-                <p className="text-xs xl:text-sm">@{user.username}</p>
-              </div>
-            ))}
+            {currentUser &&
+              filteredUsers?.map((user: IUser, idx) => (
+                <UserItem
+                  currentUserId={currentUser.id}
+                  user={user}
+                  key={idx}
+                />
+              ))}
           </div>
         )}
       </div>

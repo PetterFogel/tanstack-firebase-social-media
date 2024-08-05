@@ -4,4 +4,5 @@ export enum QUERY_KEYS {
   BOOK_EXISTS_IN_SHELF = "bookExistsInShelf",
   USER_BOOK_SHELF = "userBookShelf",
   USERS = "users",
+  IS_USER_FOLLOWING = "isUserFollowing",
 }

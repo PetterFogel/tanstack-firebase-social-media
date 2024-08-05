@@ -3,6 +3,8 @@ import { getSpecificBook } from "../utils";
 import { QUERY_KEYS } from "./queryKeys";
 import {
   checkIfBookExistsInShelf,
+  checkIfUserIsFollowing,
+  getLatestBooksFromFollowedUsers,
   getUserBookshelf,
   getUsers,
 } from "../firebase/firebase.utils";
@@ -34,5 +36,15 @@ export const useGetUsers = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.USERS],
     queryFn: () => getUsers(),
+  });
+};
+
+export const useCheckIfUserIsFollowing = (
+  userId: string,
+  followerId: string
+) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.IS_USER_FOLLOWING, userId, followerId],
+    queryFn: () => checkIfUserIsFollowing(userId, followerId),
   });
 };

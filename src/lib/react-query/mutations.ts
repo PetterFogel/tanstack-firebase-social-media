@@ -5,8 +5,10 @@ import { useMutation } from "@tanstack/react-query";
 import {
   addBookToUserBookShelf,
   createUserAccount,
+  followUser,
   removeBookFromShelf,
   signInAccount,
+  unfollowUser,
 } from "../firebase/firebase.utils";
 import { QUERY_KEYS } from "./queryKeys";
 import { IBook, IManageBook } from "@/types/books";
@@ -70,6 +72,44 @@ export const useRemoveBookFromShelf = () => {
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_BOOK_SHELF],
+      });
+    },
+  });
+};
+
+export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      currentUserId,
+      userId,
+    }: {
+      currentUserId: string;
+      userId: string;
+    }) => followUser(currentUserId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.IS_USER_FOLLOWING],
+      });
+    },
+  });
+};
+
+export const useUnfollowUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      currentUserId,
+      userId,
+    }: {
+      currentUserId: string;
+      userId: string;
+    }) => unfollowUser(currentUserId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.IS_USER_FOLLOWING],
       });
     },
   });
