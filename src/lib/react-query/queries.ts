@@ -4,7 +4,8 @@ import { QUERY_KEYS } from "./queryKeys";
 import {
   checkIfBookExistsInShelf,
   checkIfUserIsFollowing,
-  getLatestBooksFromFollowedUsers,
+  getSpecificUserFeed,
+  getFollowingFeed,
   getUserBookshelf,
   getUsers,
 } from "../firebase/firebase.utils";
@@ -46,5 +47,21 @@ export const useCheckIfUserIsFollowing = (
   return useQuery({
     queryKey: [QUERY_KEYS.IS_USER_FOLLOWING, userId, followerId],
     queryFn: () => checkIfUserIsFollowing(userId, followerId),
+  });
+};
+
+export const useGetFollowingFeed = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.FOLLOWING_FEED, userId],
+    queryFn: () => getFollowingFeed(userId),
+    enabled: !!userId,
+  });
+};
+
+export const useGetSpecificUserFeed = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.SPECIFIC_USER_FEED, userId],
+    queryFn: () => getSpecificUserFeed(userId),
+    enabled: !!userId,
   });
 };

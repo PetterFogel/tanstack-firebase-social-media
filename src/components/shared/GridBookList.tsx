@@ -9,6 +9,7 @@ interface Props {
 const GridBookList = ({ books }: Props) => {
   const data = "items" in books ? books.items : books;
 
+  console.log("DATA GRID", data);
   return (
     <>
       {data?.map((item: IBook, idx: number) => (

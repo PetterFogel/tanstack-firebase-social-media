@@ -7,6 +7,8 @@ export interface IUser {
   username: string;
   password: string;
   createdAt: Timestamp;
+  following: string[];
+  followers: string[];
 }
 
 export interface INewUser {

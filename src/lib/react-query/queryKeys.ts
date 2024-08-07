@@ -5,4 +5,6 @@ export enum QUERY_KEYS {
   USER_BOOK_SHELF = "userBookShelf",
   USERS = "users",
   IS_USER_FOLLOWING = "isUserFollowing",
+  FOLLOWING_FEED = "followingFeed",
+  SPECIFIC_USER_FEED = "specificUserFeed",
 }

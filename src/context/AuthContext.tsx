@@ -12,11 +12,12 @@ import {
   useEffect,
   useContext,
 } from "react";
+import { IUser } from "@/types/user";
 
 interface ContextProps {
-  currentUser: DocumentData | null;
+  currentUser: IUser | null;
   isLoading: boolean;
-  setCurrentUser: Dispatch<SetStateAction<User | null>>;
+  setCurrentUser: Dispatch<SetStateAction<IUser | null>>;
 }
 
 export const AuthContext = createContext<ContextProps>({
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export const AuthProvider: FC<Props> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<DocumentData | null>(null);
+  const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const value = { currentUser, isLoading, setCurrentUser };
 

@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
-import { IBook, ISearchedBooks } from "@/types/books";
+import { IBook, IBookFeed, ISearchedBooks } from "@/types/books";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,10 +41,10 @@ export const getSpecificBook = async (bookId: string): Promise<IBook> => {
   return response.json();
 };
 
-export const sortBooksByAddedDate = (books: IBook[] | undefined) =>
-  books?.sort((a: IBook, b: IBook) => {
+export const sortBooksByAddedDate = (books: IBookFeed[] | undefined) =>
+  books?.sort((a: IBookFeed, b: IBookFeed) => {
     return (
-      new Date(b.addedAt.toDate()).getTime() -
-      new Date(a.addedAt.toDate()).getTime()
+      new Date(b.createdAt.toDate()).getTime() -
+      new Date(a.createdAt.toDate()).getTime()
     );
   });

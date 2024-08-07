@@ -2,14 +2,18 @@ import { toast } from "@/components/ui/use-toast";
 import { auth, db } from "./firebase.config";
 import { FirebaseError } from "firebase/app";
 import {
-  arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  limit,
+  query,
+  serverTimestamp,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import {
   User,
@@ -17,9 +21,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { IBook } from "@/types/books";
 import { INewUser, IUser } from "@/types/user";
-import { get } from "react-hook-form";
+import { IBook, IBookFeed, IBookImageLinks, IBookShelf } from "@/types/books";
 
 export const signInAccount = async (user: {
   email: string;
@@ -88,7 +91,7 @@ export const getCurrentUserDoc = async (authUser: User | null) => {
 };
 
 const addbookshelfForUser = async (userId: string) => {
-  const userBookShelfRef = doc(db, "bookshelf", userId);
+  const userBookShelfRef = doc(db, "savedBooks", userId);
   await setDoc(userBookShelfRef, {
     bookIds: [],
     createdAt: new Date(),
@@ -96,79 +99,72 @@ const addbookshelfForUser = async (userId: string) => {
   });
 };
 
-export const addBookToUserBookShelf = async (book: IBook, userId: string) => {
-  const bookshelfDocRef = doc(db, "bookshelf", userId);
+export const getUserBookshelf = async (userId: string) => {
+  const savedBooksDocRef = doc(db, "savedBooks", userId);
+  const savedBooksDocSnap = await getDoc(savedBooksDocRef);
 
-  try {
-    await updateDoc(bookshelfDocRef, {
-      books: arrayUnion({
-        id: book.id,
-        volumeInfo: {
-          title: book.volumeInfo.title,
-          authors: book.volumeInfo.authors,
-          categories: book.volumeInfo.authors,
-          description: book.volumeInfo.description,
-          imageLinks: {
-            thumbnail: book.volumeInfo.imageLinks?.thumbnail || "",
-            smallThumbnail: book.volumeInfo.imageLinks?.smallThumbnail || "",
-          },
-          pageCount: book.volumeInfo.pageCount,
-          publisher: book.volumeInfo.publisher,
-          publishedDate: book.volumeInfo.publishedDate,
-        },
-        userId,
-        addedAt: new Date(),
-        updatedAt: new Date(),
-      }),
-      updatedAt: new Date(),
-    });
-    toast({ title: "Book was added to your bookshelf!" });
-  } catch (error) {
-    console.error("Error adding book to user bookshelf: ", error);
-    toast({ title: "Couldn't add book right now." });
-  }
+  if (!savedBooksDocSnap.exists()) return;
+
+  const bookshelfData = savedBooksDocSnap.data();
+  const booksIds = bookshelfData.bookIds || [];
+
+  const booksQuery = query(
+    collection(db, "books"),
+    where("__name__", "in", booksIds),
+    limit(10)
+  );
+
+  const booksSnapshot = await getDocs(booksQuery);
+  const usersBooks = booksSnapshot.docs.map((doc) => ({
+    ...doc.data(),
+  })) as IBook[];
+
+  return usersBooks;
 };
 
-export const getUserBookshelf = async (userId: string) => {
-  const bookshelfDocRef = doc(db, "bookshelf", userId);
-  const bookshelfDocSnap = await getDoc(bookshelfDocRef);
+export const getBookCollection = async () => {
+  const booksCollection = collection(db, "books");
+  const booksSnapshot = await getDocs(booksCollection);
+  const booksList = booksSnapshot.docs.map((doc) => ({
+    ...doc.data(),
+  }));
 
-  const user = await getUserDoc(userId);
-
-  if (!bookshelfDocSnap.exists()) return;
-  const bookshelfData = bookshelfDocSnap.data();
-  const books = bookshelfData.books as IBook[];
-
-  const bookshelf = { user, books };
-  return bookshelf;
+  return booksList as IBook[];
 };
 
 export const checkIfBookExistsInShelf = async (
   bookId: string,
   userId: string
 ) => {
-  const bookshelf = await getUserBookshelf(userId);
+  const books = await getUserBookshelf(userId);
 
-  const bookExists = bookshelf?.books.some((book: IBook) => book.id === bookId);
+  const bookExists = books?.some((book: IBook) => book.id === bookId);
   return bookExists;
 };
 
-export const removeBookFromShelf = async (bookId: string, userId: string) => {
+export const removeBookFromUserShelf = async (
+  bookId: string,
+  userId: string
+) => {
   try {
-    const bookshelfDocRef = doc(db, "bookshelf", userId);
+    const bookshelfDocRef = doc(db, "savedBooks", userId);
     const bookshelfDocSnap = await getDoc(bookshelfDocRef);
 
     if (!bookshelfDocSnap.exists()) return;
 
     const bookshelfData = bookshelfDocSnap.data();
-    const books = bookshelfData.books || [];
+    const books = bookshelfData.bookIds || [];
 
-    const updatedBooks = books.filter((book: IBook) => book.id !== bookId);
+    const updatedBooks = books.filter((id: string) => id !== bookId);
 
     await updateDoc(bookshelfDocRef, {
-      books: updatedBooks,
+      bookIds: updatedBooks,
       updatedAt: new Date(),
     });
+
+    const reviewId = `${userId}_${bookId}`;
+    const reviewDocRef = doc(db, "reviews", reviewId);
+    await deleteDoc(reviewDocRef);
 
     toast({ title: "Book was removed from your bookshelf!" });
   } catch (error) {
@@ -214,12 +210,11 @@ export const followUser = async (userId: string, followerId: string) => {
 
 export const unfollowUser = async (userId: string, followerId: string) => {
   const userDocRef = doc(db, "users", userId);
-
   const userDocSnap = await getDoc(userDocRef);
   if (!userDocSnap.exists()) return;
 
-  const currentFollowingList = userDocSnap.data().following || [];
-  const updatedFollowingList = currentFollowingList.filter(
+  const followingList = userDocSnap.data().following || [];
+  const updatedFollowingList = followingList.filter(
     (id: string) => id !== followerId
   );
 
@@ -264,4 +259,174 @@ export const checkIfUserIsFollowing = async (
 
   const isFollowing = following.includes(followerId);
   return isFollowing;
+};
+
+export const addBookToCollection = async (bookId: string, bookInfo: IBook) => {
+  const bookRef = doc(db, "books", bookId);
+  const bookSnapshot = await getDoc(bookRef);
+
+  if (bookSnapshot.exists()) return;
+  await setDoc(bookRef, bookInfo);
+};
+
+export const saveBookForUser = async (userId: string, bookId: string) => {
+  const userBooksRef = doc(db, "savedBooks", userId);
+
+  await updateDoc(userBooksRef, {
+    bookIds: arrayUnion(bookId),
+    updatedAt: new Date(),
+  });
+};
+
+export const addReviewForBook = async (
+  user: IUser,
+  bookId: string,
+  bookTitle: string,
+  bookImages?: IBookImageLinks
+) => {
+  try {
+    const reviewId = `${user.id}_${bookId}`;
+    const reviewRef = doc(db, "reviews", reviewId);
+
+    const initialReview = {
+      userId: user.id,
+      username: user.username,
+      bookId,
+      bookTitle,
+      imageLinks: {
+        thumbnail: bookImages?.thumbnail,
+        smallThumbnail: bookImages?.smallThumbnail,
+      },
+      reviewText: "",
+      rating: 0,
+      actionStatus: "bookAdded",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    await setDoc(reviewRef, initialReview);
+  } catch (error) {
+    console.error("Error adding review: ", error);
+  }
+};
+
+export const addBookToUserShelf = async (book: IBook, user: IUser) => {
+  const { id: bookId, volumeInfo } = book;
+
+  const newBook: IBook = {
+    id: bookId,
+    volumeInfo: {
+      title: volumeInfo.title,
+      authors: volumeInfo.authors,
+      categories: volumeInfo.authors,
+      description: volumeInfo.description,
+      imageLinks: {
+        thumbnail: volumeInfo.imageLinks?.thumbnail || "",
+        smallThumbnail: volumeInfo.imageLinks?.smallThumbnail || "",
+      },
+      pageCount: volumeInfo.pageCount,
+      publisher: volumeInfo.publisher,
+      publishedDate: volumeInfo.publishedDate,
+    },
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
+
+  try {
+    await addBookToCollection(bookId, newBook);
+    await addReviewForBook(
+      user,
+      book.id,
+      newBook.volumeInfo.title,
+      newBook.volumeInfo.imageLinks
+    );
+    await saveBookForUser(user.id, bookId);
+    toast({ title: "Book was added to your bookshelf!" });
+  } catch (error) {
+    console.error("Error adding book to user bookshelf: ", error);
+    toast({ title: "Couldn't add book right now." });
+  }
+};
+
+export const getFollowingList = async (userId: string) => {
+  const userDocRef = doc(db, "users", userId);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (!userDocSnap.exists()) return [];
+
+  const userData = userDocSnap.data();
+  return userData.following || [];
+};
+
+const getSavedBooksByFollowingIds = async (userIds: string[]) => {
+  const savedBooksCollectionRef = collection(db, "savedBooks");
+  const savedBooksQuery = query(
+    savedBooksCollectionRef,
+    where("__name__", "in", userIds),
+    limit(10)
+  );
+  const savedBooksQuerySnapshot = await getDocs(savedBooksQuery);
+
+  const savedBooks = savedBooksQuerySnapshot.docs.map((doc) => ({
+    userId: doc.id,
+    ...doc.data(),
+  })) as IBookShelf[];
+
+  return savedBooks;
+};
+
+const getReviewsCollection = async (userIds: string[], bookIds: string[]) => {
+  const reviewsCollectionRef = collection(db, "reviews");
+
+  const reviewsQuery = query(
+    reviewsCollectionRef,
+    where("userId", "in", userIds),
+    where("bookId", "in", bookIds),
+    limit(10)
+  );
+
+  const reviewsQuerySnapshot = await getDocs(reviewsQuery);
+
+  const reviews = reviewsQuerySnapshot.docs.map((doc) => ({
+    ...doc.data(),
+  })) as IBookFeed[];
+
+  return reviews;
+};
+
+export const getFollowingFeed = async (userId: string) => {
+  const followingIds = await getFollowingList(userId);
+  const idsWithCurrentUser = [...followingIds, userId];
+
+  try {
+    const savedBooks = await getSavedBooksByFollowingIds(idsWithCurrentUser);
+    const allBookIds = savedBooks.flatMap((savedBook) => savedBook.bookIds);
+
+    const reviews = await getReviewsCollection(idsWithCurrentUser, allBookIds);
+    return reviews;
+  } catch (error) {
+    console.error("Something went wrong.", error);
+    return [];
+  }
+};
+
+export const getSpecificUserFeed = async (userId: string) => {
+  try {
+    const reviewsCollectionRef = collection(db, "reviews");
+    const reviewsQuery = query(
+      reviewsCollectionRef,
+      where("userId", "==", userId),
+      limit(10)
+    );
+
+    const reviewsQuerySnapshot = await getDocs(reviewsQuery);
+    const reviews = reviewsQuerySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+    })) as IBookFeed[];
+
+    return reviews;
+  } catch (error) {
+    console.error("Something went wrong: ", error);
+    return [];
+  }
 };

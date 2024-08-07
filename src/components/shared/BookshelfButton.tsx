@@ -1,32 +1,31 @@
-import {
-  useAddBookToShelf,
-  useRemoveBookFromShelf,
-} from "@/lib/react-query/mutations";
+import { IUser } from "@/types/user";
+import { IBook } from "@/types/books";
 import { Button } from "../ui/button";
 import { Album, BookCheck, LoaderCircle } from "lucide-react";
-import { IBook } from "@/types/books";
+import {
+  useAddBookToUserShelf,
+  useRemoveBookFromUserShelf,
+} from "@/lib/react-query/mutations";
 
 interface Props {
   bookExist: boolean | undefined;
   book: IBook;
-  userId: string;
+  user: IUser;
 }
 
-const BookshelfButton = ({ bookExist, book, userId }: Props) => {
+const BookshelfButton = ({ bookExist, book, user }: Props) => {
   const { mutateAsync: addBookToShelf, isPending: isAdding } =
-    useAddBookToShelf();
+    useAddBookToUserShelf();
 
   const { mutateAsync: removeBookFromShelf, isPending: isRemoving } =
-    useRemoveBookFromShelf();
+    useRemoveBookFromUserShelf();
 
   const addBookToShelfHandler = () => {
-    if (!book.id || !userId) return;
-    addBookToShelf({ book, userId });
+    addBookToShelf({ book, user });
   };
 
   const removeBookHandler = async () => {
-    if (!book.id || !userId) return;
-    removeBookFromShelf({ bookId: book.id, userId });
+    removeBookFromShelf({ bookId: book.id, userId: user.id });
   };
 
   return (
