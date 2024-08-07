@@ -1,7 +1,7 @@
 import { auth } from "@/lib/firebase/firebase.config";
-import { DocumentData } from "firebase/firestore";
+import { IUser } from "@/types/user";
 import { getCurrentUserDoc } from "@/lib/firebase/firebase.utils";
-import { User, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   createContext,
   Dispatch,
@@ -12,7 +12,6 @@ import {
   useEffect,
   useContext,
 } from "react";
-import { IUser } from "@/types/user";
 
 interface ContextProps {
   currentUser: IUser | null;

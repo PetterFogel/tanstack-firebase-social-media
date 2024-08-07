@@ -1,7 +1,7 @@
 import { LoaderCircle } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 import { useGetFollowingFeed } from "@/lib/react-query/queries";
-import BookwallList from "@/components/shared/BookwallList";
+import BookFeedList from "@/components/shared/BookFeedList";
 
 const HomePage = () => {
   const { currentUser } = useAuthContext();
@@ -19,7 +19,7 @@ const HomePage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            {bookFeed && <BookwallList bookFeed={bookFeed} />}
+            {bookFeed && <BookFeedList bookFeed={bookFeed} />}
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ export interface IUser {
   username: string;
   password: string;
   createdAt: Timestamp;
+  bookIds: string[];
   following: string[];
   followers: string[];
 }

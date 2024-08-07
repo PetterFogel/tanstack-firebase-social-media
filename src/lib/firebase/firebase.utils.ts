@@ -142,6 +142,22 @@ export const checkIfBookExistsInShelf = async (
   return bookExists;
 };
 
+const removeBookIdFromUser = async (userId: string, bookId: string) => {
+  const userDocRef = doc(db, "users", userId);
+  const userDocSnap = await getDoc(userDocRef);
+
+  if (!userDocSnap.exists()) return;
+
+  const userData = userDocSnap.data();
+  const bookIds = userData.bookIds || [];
+
+  const updatedBookIds = bookIds.filter((id: string) => id !== bookId);
+
+  await updateDoc(userDocRef, {
+    bookIds: updatedBookIds,
+  });
+};
+
 export const removeBookFromUserShelf = async (
   bookId: string,
   userId: string
@@ -165,6 +181,8 @@ export const removeBookFromUserShelf = async (
     const reviewId = `${userId}_${bookId}`;
     const reviewDocRef = doc(db, "reviews", reviewId);
     await deleteDoc(reviewDocRef);
+
+    await removeBookIdFromUser(userId, bookId);
 
     toast({ title: "Book was removed from your bookshelf!" });
   } catch (error) {
@@ -310,6 +328,14 @@ export const addReviewForBook = async (
   }
 };
 
+const addBookIdsForUser = async (userId: string, bookId: string) => {
+  const userBooksRef = doc(db, "users", userId);
+
+  await updateDoc(userBooksRef, {
+    bookIds: arrayUnion(bookId),
+  });
+};
+
 export const addBookToUserShelf = async (book: IBook, user: IUser) => {
   const { id: bookId, volumeInfo } = book;
 
@@ -334,6 +360,7 @@ export const addBookToUserShelf = async (book: IBook, user: IUser) => {
 
   try {
     await addBookToCollection(bookId, newBook);
+    await addBookIdsForUser(user.id, bookId);
     await addReviewForBook(
       user,
       book.id,
@@ -358,7 +385,7 @@ export const getFollowingList = async (userId: string) => {
   return userData.following || [];
 };
 
-const getSavedBooksByFollowingIds = async (userIds: string[]) => {
+const getSavedBooksByIds = async (userIds: string[]) => {
   const savedBooksCollectionRef = collection(db, "savedBooks");
   const savedBooksQuery = query(
     savedBooksCollectionRef,
@@ -399,7 +426,7 @@ export const getFollowingFeed = async (userId: string) => {
   const idsWithCurrentUser = [...followingIds, userId];
 
   try {
-    const savedBooks = await getSavedBooksByFollowingIds(idsWithCurrentUser);
+    const savedBooks = await getSavedBooksByIds(idsWithCurrentUser);
     const allBookIds = savedBooks.flatMap((savedBook) => savedBook.bookIds);
 
     const reviews = await getReviewsCollection(idsWithCurrentUser, allBookIds);
@@ -410,7 +437,9 @@ export const getFollowingFeed = async (userId: string) => {
   }
 };
 
-export const getSpecificUserFeed = async (userId: string) => {
+export const getSpecificUserFeed = async (
+  userId: string
+): Promise<{ bookFeed: IBookFeed[]; user: IUser } | undefined> => {
   try {
     const reviewsCollectionRef = collection(db, "reviews");
     const reviewsQuery = query(
@@ -420,13 +449,14 @@ export const getSpecificUserFeed = async (userId: string) => {
     );
 
     const reviewsQuerySnapshot = await getDocs(reviewsQuery);
-    const reviews = reviewsQuerySnapshot.docs.map((doc) => ({
+    const bookFeed = reviewsQuerySnapshot.docs.map((doc) => ({
       ...doc.data(),
     })) as IBookFeed[];
 
-    return reviews;
+    const user = (await getUserDoc(userId)) as IUser;
+
+    return { bookFeed, user };
   } catch (error) {
     console.error("Something went wrong: ", error);
-    return [];
   }
 };

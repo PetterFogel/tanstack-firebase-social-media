@@ -8,7 +8,7 @@ interface Props {
   bookFeed: IBookFeed[];
 }
 
-const BookwallList = ({ bookFeed }: Props) => {
+const BookFeedList = ({ bookFeed }: Props) => {
   const { currentUser } = useAuthContext();
 
   const sortedBooksbyDate = sortBooksByAddedDate(bookFeed);
@@ -62,4 +62,4 @@ const BookwallList = ({ bookFeed }: Props) => {
   );
 };
 
-export default BookwallList;
+export default BookFeedList;

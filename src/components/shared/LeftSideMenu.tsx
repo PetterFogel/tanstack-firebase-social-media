@@ -3,12 +3,12 @@ import { useAuthContext } from "@/context/AuthContext";
 import { signOutAccount } from "@/lib/firebase/firebase.utils";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import {
+  BookUser,
   HomeIcon,
   LibraryBig,
   LogOut,
   SearchIcon,
   UserRound,
-  UsersRound,
 } from "lucide-react";
 
 const leftSideMenuLinks = [
@@ -30,7 +30,7 @@ const leftSideMenuLinks = [
   {
     route: "/people",
     label: "People",
-    svgIcon: <UsersRound size={16} />,
+    svgIcon: <BookUser size={16} />,
   },
 ];
 
