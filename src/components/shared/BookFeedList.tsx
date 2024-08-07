@@ -36,7 +36,7 @@ const BookFeedList = ({ bookFeed }: Props) => {
             )}
           </div>
           <div className="space-y-2 w-full">
-            <h3 className="text-xs md:text-base">
+            <h3 className="text-sm md:text-base">
               {displayUserName(item.userId)} added{" "}
               <span className="font-bold">{item.bookTitle}</span> to the shelf
             </h3>

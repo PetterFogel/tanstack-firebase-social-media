@@ -8,7 +8,7 @@ interface Props {
 
 const ProfileStats = ({ user, isFeedLoading }: Props) => {
   return (
-    <div className="flex bg-white rounded-lg shadow-md p-4 gap-4">
+    <div className="flex bg-white md:md:rounded-lg p-4 gap-4 rounded-none shadow-none md:shadow-md">
       <div className="bg-green-400 rounded-full h-10 w-10 xl:h-14 xl:w-14 flex-center">
         <UserRound size={30} />
       </div>
@@ -21,12 +21,19 @@ const ProfileStats = ({ user, isFeedLoading }: Props) => {
           >
             {user.name}
           </h2>
-          <p className="text-xs xl:text-sm">@{user.username}</p>
+          <p className="text-sm">@{user.username}</p>
         </div>
-        <div className="flex gap-4 text-xs sm:text-sm">
-          <p>{user.bookIds.length} Books</p>
-          <p>{user.followers.length} Followers</p>
-          <p>{user.following.length} Following</p>
+        <div className="flex gap-4 text-sm">
+          <p>
+            <span className="font-bold">{user.bookIds.length}</span> Books
+          </p>
+          <p>
+            <span className="font-bold"> {user.followers.length}</span>{" "}
+            Followers
+          </p>
+          <p>
+            <span className="font-bold">{user.following.length}</span> Following
+          </p>
         </div>
       </div>
     </div>
