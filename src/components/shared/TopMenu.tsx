@@ -8,7 +8,7 @@ const TopMenu = () => {
     <header className="md:hidden w-full border-b bg-white">
       <div className="flex-between py-2 px-4">
         <Link to="/" className="font-bold text-base">
-          Logo
+          BookShare
         </Link>
         <div className="flex-center gap-4">
           <Button
