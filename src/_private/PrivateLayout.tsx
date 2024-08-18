@@ -8,9 +8,9 @@ const PrivateLayout = () => {
     <div className="w-full md:flex">
       <TopMenu />
       <LeftSideMenu />
-      <section className="w-full bg-slate-50 md:px-4 pb-16 md:overflow-y-scroll">
+      <div className="w-full bg-slate-50 md:px-4 pb-16 md:overflow-y-scroll">
         <Outlet />
-      </section>
+      </div>
       <BottomMenu />
     </div>
   );
