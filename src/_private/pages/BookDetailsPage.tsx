@@ -49,7 +49,7 @@ const BookDetailsPage = () => {
   return (
     <div className="w-full max-w-5xl mx-auto h-full md:py-8">
       {book && (
-        <div className="bg-white md:shadow-md rounded-lg md:p-4 grid grid-cols-3 md:grid-cols-9 gap-4 lg:gap-8">
+        <div className="bg-white md:shadow rounded-lg md:p-4 grid grid-cols-3 md:grid-cols-9 gap-4 lg:gap-8">
           <div className="col-span-3 md:col-span-2 h-full space-y-4">
             <div className="md:bg-white bg-slate-50 py-4 md:p-0">
               <div className="md:w-full w-2/5 m-auto ">

@@ -28,7 +28,7 @@ const UserItem = ({ currentUserId, user }: Props) => {
     unfollowUser({ currentUserId, userId: user.id });
 
   return (
-    <div className="flex items-center flex-col bg-white shadow-md p-4 rounded-lg gap-4">
+    <div className="flex items-center flex-col bg-white shadow p-4 rounded-lg gap-4">
       <div className="flex-center flex-col ">
         <Link to={`/profile/${user.id}`} className="flex-center flex-col">
           <div className="bg-green-400 rounded-full h-10 w-10 xl:h-14 xl:w-14 flex-center">

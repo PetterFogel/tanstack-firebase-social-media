@@ -16,7 +16,7 @@ const GridBookList = ({ books }: Props) => {
         <Link
           key={idx}
           to={`/book/${item.id}`}
-          className="bg-white shadow-md rounded-lg flex flex-col"
+          className="bg-white shadow rounded-lg flex flex-col"
         >
           {item.volumeInfo.imageLinks?.thumbnail ? (
             <img

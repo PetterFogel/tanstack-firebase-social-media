@@ -24,7 +24,7 @@ const BookFeedList = ({ bookFeed }: Props) => {
       {sortedBooksbyDate?.map((item, idx: number) => (
         <div
           key={idx}
-          className="bg-white rounded-md shadow-md md:p-4 px-2 py-3 flex gap-4"
+          className="bg-white rounded-md shadow md:p-4 px-2 py-3 flex gap-4"
         >
           <div>
             {currentUser && (
