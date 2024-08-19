@@ -1,5 +1,5 @@
 interface Props {
-  title: string | undefined;
+  title?: string;
   description?: string;
   keywords?: string;
   authors?: string;
@@ -8,7 +8,7 @@ interface Props {
 const MetaData = ({ title, description, authors, keywords }: Props) => {
   return (
     <>
-      <title>{`${title} | StoryClub`}</title>
+      <title>{title ? `${title} | StoryClub` : "StoryClub"}</title>
       <meta name="title" content={title} />
       <meta name="author" content={authors || "Petter Fogel"} />
       <meta

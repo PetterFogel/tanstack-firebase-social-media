@@ -1,3 +1,4 @@
+import MetaData from "@/components/shared/MetaData";
 import { useAuthContext } from "@/context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 
@@ -6,6 +7,7 @@ const PublicLayout = () => {
 
   return (
     <>
+      <MetaData />
       {currentUser ? (
         <Navigate to="/" />
       ) : (
