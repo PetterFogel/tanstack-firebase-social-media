@@ -28,7 +28,7 @@ const BookFeedList = ({ bookFeed }: Props) => {
         >
           <div>
             {currentUser && (
-              <Link to={`/profile/${currentUser.id}`}>
+              <Link to={`/profile/${item.userId}`}>
                 <div className="bg-green-400 rounded-full h-8 w-8 flex-center">
                   <UserRound size={16} />
                 </div>

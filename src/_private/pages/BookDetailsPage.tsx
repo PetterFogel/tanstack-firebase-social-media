@@ -9,6 +9,7 @@ import { LoaderCircle, Image } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import BookshelfButton from "@/components/shared/BookshelfButton";
 import MetaData from "@/components/shared/MetaData";
+import { Separator } from "@/components/ui/separator";
 
 const BookDetailsPage = () => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const BookDetailsPage = () => {
       />
       <div className="w-full max-w-5xl mx-auto h-full md:py-8">
         {book && (
-          <div className="bg-white md:shadow rounded-lg md:p-4 grid grid-cols-3 md:grid-cols-9 gap-4 lg:gap-8">
+          <div className="bg-white md:shadow rounded-lg md:px-6 md:py-8 grid grid-cols-3 md:grid-cols-9 gap-4 lg:gap-8">
             <div className="col-span-3 md:col-span-2 h-full space-y-4">
               <div className="md:bg-white bg-slate-50 py-4 md:p-0">
                 <div className="md:w-full w-2/5 m-auto ">
@@ -103,21 +104,23 @@ const BookDetailsPage = () => {
                   {bookAuthors}
                 </h2>
               </div>
-              <hr />
+              <Separator />
               <div className="flex flex-col gap-2">
                 <div className="flex gap-4">
                   <h3 className="text-sm lg:text-sm font-medium text-gray-500">
                     Published {book.volumeInfo.publishedDate}
                   </h3>
-                  <h3 className="text-sm lg:text-sm font-medium text-gray-500">
+                  <h3 className="text-sm font-medium text-gray-500">
                     {book.volumeInfo.pageCount} pages
                   </h3>
                 </div>
-                <h3 className="text-xs lg:text-sm font-medium text-gray-500 italic">
+                <h3 className="text-sm font-medium text-gray-500 italic">
                   {filteredCategoryString}
                 </h3>
               </div>
-              <p className="mt-2 text-xs lg:text-sm">{formatedDescription}</p>
+              <p className="mt-2 text-[13px] lg:text-sm">
+                {formatedDescription}
+              </p>
             </div>
           </div>
         )}
