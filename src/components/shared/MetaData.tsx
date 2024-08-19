@@ -8,14 +8,14 @@ interface Props {
 const MetaData = ({ title, description, authors, keywords }: Props) => {
   return (
     <>
-      <title>{`${title} | BookShare`}</title>
+      <title>{`${title} | StoryClub`}</title>
       <meta name="title" content={title} />
       <meta name="author" content={authors || "Petter Fogel"} />
       <meta
         name="description"
         content={
           description ||
-          "BookShare is a social media platform for book enthusiasts to connect, share, and discover new reads. Create your bookshelf, follow other users, and explore what your friends are reading. Join our community today!"
+          "StoryClub is a social media platform for book enthusiasts to connect, share, and discover new reads. Create your bookshelf, follow other users, and explore what your friends are reading. Join our community today!"
         }
       />
       <meta

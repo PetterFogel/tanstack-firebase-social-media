@@ -84,7 +84,6 @@ const BookDetailsPage = () => {
                   )}
                 </div>
               </div>
-
               <div className="bg-white px-4 md:px-0">
                 {currentUser && (
                   <BookshelfButton
@@ -95,13 +94,15 @@ const BookDetailsPage = () => {
                 )}
               </div>
             </div>
-            <div className="col-span-3 md:col-span-7 p-4 md:p-0 space-y-3 md:space-y-3">
-              <h2 className="text-2xl lg:text-3xl font-bold">
-                {book.volumeInfo.title}
-              </h2>
-              <h2 className="text-lg lg:text-xl font-medium text-gray-500">
-                {bookAuthors}
-              </h2>
+            <div className="col-span-3 md:col-span-7 p-4 pt-0 md:p-0 space-y-3 md:space-y-3">
+              <div>
+                <h2 className="text-2xl lg:text-3xl font-bold">
+                  {book.volumeInfo.title}
+                </h2>
+                <h2 className="text-lg lg:text-xl font-medium text-gray-500">
+                  {bookAuthors}
+                </h2>
+              </div>
               <hr />
               <div className="flex flex-col gap-2">
                 <div className="flex gap-4">
