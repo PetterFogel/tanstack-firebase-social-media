@@ -57,6 +57,9 @@ export const createUserAccount = async (userValues: INewUser) => {
       email,
       username,
       createdAt: new Date(),
+      bookIds: [],
+      followers: [],
+      following: [],
     });
 
     await addbookshelfForUser(user.uid);
@@ -91,7 +94,7 @@ export const getCurrentUserDoc = async (authUser: User | null) => {
 };
 
 const addbookshelfForUser = async (userId: string) => {
-  const userBookShelfRef = doc(db, "savedBooks", userId);
+  const userBookShelfRef = doc(db, "userBookshelfs", userId);
   await setDoc(userBookShelfRef, {
     bookIds: [],
     createdAt: new Date(),
@@ -100,7 +103,7 @@ const addbookshelfForUser = async (userId: string) => {
 };
 
 export const getUserBookshelf = async (userId: string) => {
-  const savedBooksDocRef = doc(db, "savedBooks", userId);
+  const savedBooksDocRef = doc(db, "userBookshelfs", userId);
   const savedBooksDocSnap = await getDoc(savedBooksDocRef);
 
   if (!savedBooksDocSnap.exists()) return;
@@ -142,6 +145,11 @@ export const checkIfBookExistsInShelf = async (
   return bookExists;
 };
 
+const deleteBookFromCollection = async (bookId: string) => {
+  const bookRef = doc(db, "books", bookId);
+  await deleteDoc(bookRef);
+};
+
 const removeBookIdFromUser = async (userId: string, bookId: string) => {
   const userDocRef = doc(db, "users", userId);
   const userDocSnap = await getDoc(userDocRef);
@@ -163,7 +171,7 @@ export const removeBookFromUserShelf = async (
   userId: string
 ) => {
   try {
-    const bookshelfDocRef = doc(db, "savedBooks", userId);
+    const bookshelfDocRef = doc(db, "userBookshelfs", userId);
     const bookshelfDocSnap = await getDoc(bookshelfDocRef);
 
     if (!bookshelfDocSnap.exists()) return;
@@ -172,6 +180,14 @@ export const removeBookFromUserShelf = async (
     const books = bookshelfData.bookIds || [];
 
     const updatedBooks = books.filter((id: string) => id !== bookId);
+
+    const users = await getUsers();
+
+    const userBookIds = users.flatMap((user) => user.bookIds);
+    const filteredUserBookIds = userBookIds.filter((id) => id === bookId);
+    if (filteredUserBookIds.length === 1) {
+      await deleteBookFromCollection(bookId);
+    }
 
     await updateDoc(bookshelfDocRef, {
       bookIds: updatedBooks,
@@ -288,7 +304,7 @@ export const addBookToCollection = async (bookId: string, bookInfo: IBook) => {
 };
 
 export const saveBookForUser = async (userId: string, bookId: string) => {
-  const userBooksRef = doc(db, "savedBooks", userId);
+  const userBooksRef = doc(db, "userBookshelfs", userId);
 
   await updateDoc(userBooksRef, {
     bookIds: arrayUnion(bookId),
@@ -386,7 +402,7 @@ export const getFollowingList = async (userId: string) => {
 };
 
 const getSavedBooksByIds = async (userIds: string[]) => {
-  const savedBooksCollectionRef = collection(db, "savedBooks");
+  const savedBooksCollectionRef = collection(db, "userBookshelfs");
   const savedBooksQuery = query(
     savedBooksCollectionRef,
     where("__name__", "in", userIds),
