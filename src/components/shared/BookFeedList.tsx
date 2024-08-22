@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { IBookFeed } from "@/types/books";
 import { useAuthContext } from "@/context/AuthContext";
 import { Image, UserRound } from "lucide-react";
-import { sortBooksByAddedDate } from "@/lib/utils";
+import { getTimeAgoHandler, sortBooksByAddedDate } from "@/lib/utils";
 
 interface Props {
   bookFeed: IBookFeed[];
@@ -14,9 +14,10 @@ const BookFeedList = ({ bookFeed }: Props) => {
   const sortedBooksbyDate = sortBooksByAddedDate(bookFeed);
 
   const displayUserName = (userId: string) => {
-    if (currentUser?.id === userId) return "You";
+    if (currentUser?.id === userId) return <span>You</span>;
+
     const user = bookFeed.find((user) => user.userId === userId);
-    return user?.username || "Someone";
+    return <span className="font-bold">{user?.username || "Someone"}</span>;
   };
 
   return (
@@ -55,6 +56,11 @@ const BookFeedList = ({ bookFeed }: Props) => {
                 )}
               </Link>
             </div>
+          </div>
+          <div>
+            <p className="text-[10px] sm:text-sm font-medium text-gray-500">
+              {getTimeAgoHandler(item.updatedAt)}
+            </p>
           </div>
         </div>
       ))}

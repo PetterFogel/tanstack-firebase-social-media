@@ -425,7 +425,7 @@ const getReviewsCollection = async (userIds: string[], bookIds: string[]) => {
     reviewsCollectionRef,
     where("userId", "in", userIds),
     where("bookId", "in", bookIds),
-    limit(10)
+    limit(20)
   );
 
   const reviewsQuerySnapshot = await getDocs(reviewsQuery);
