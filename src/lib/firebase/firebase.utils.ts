@@ -81,7 +81,7 @@ export const getUserDoc = async (userId: string) => {
   const userDoc = doc(db, "users", userId);
   const userDocSnap = await getDoc(userDoc);
 
-  if (!userDocSnap.exists()) return;
+  if (!userDocSnap.exists()) return undefined;
   const userData = userDocSnap.data() as IUser;
   return userData;
 };
@@ -102,11 +102,14 @@ const addbookshelfForUser = async (userId: string) => {
   });
 };
 
-export const getUserBookshelf = async (userId: string) => {
+export const getUserBookshelf = async (
+  userId: string | undefined
+): Promise<{ books: IBook[]; user: IUser } | undefined> => {
+  if (!userId) return;
   const savedBooksDocRef = doc(db, "userBookshelfs", userId);
   const savedBooksDocSnap = await getDoc(savedBooksDocRef);
 
-  if (!savedBooksDocSnap.exists()) return;
+  if (!savedBooksDocSnap.exists()) return undefined;
 
   const bookshelfData = savedBooksDocSnap.data();
   const booksIds = bookshelfData.bookIds || [];
@@ -118,11 +121,13 @@ export const getUserBookshelf = async (userId: string) => {
   );
 
   const booksSnapshot = await getDocs(booksQuery);
-  const usersBooks = booksSnapshot.docs.map((doc) => ({
+  const books = booksSnapshot.docs.map((doc) => ({
     ...doc.data(),
   })) as IBook[];
 
-  return usersBooks;
+  const user = (await getUserDoc(userId)) as IUser;
+
+  return { books, user };
 };
 
 export const getBookCollection = async () => {
@@ -139,9 +144,12 @@ export const checkIfBookExistsInShelf = async (
   bookId: string,
   userId: string
 ) => {
-  const books = await getUserBookshelf(userId);
+  const bookshelf = await getUserBookshelf(userId);
 
-  const bookExists = books?.some((book: IBook) => book.id === bookId);
+  if (!bookshelf) return false;
+  const { books } = bookshelf;
+
+  const bookExists = books.some((book: IBook) => book.id === bookId);
   return bookExists;
 };
 

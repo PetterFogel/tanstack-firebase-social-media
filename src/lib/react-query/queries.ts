@@ -26,10 +26,11 @@ export const useCheckIfBookExistInShelf = (bookId: string, userId: string) => {
   });
 };
 
-export const useGetUserBookshelf = (userId: string) => {
+export const useGetUserBookshelf = (userId: string | undefined) => {
   return useQuery({
     queryKey: [QUERY_KEYS.USER_BOOK_SHELF, userId],
     queryFn: () => getUserBookshelf(userId),
+    enabled: !!userId,
   });
 };
 
