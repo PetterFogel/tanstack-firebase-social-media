@@ -414,7 +414,7 @@ const getSavedBooksByIds = async (userIds: string[]) => {
   const savedBooksQuery = query(
     savedBooksCollectionRef,
     where("__name__", "in", userIds),
-    limit(10)
+    limit(30)
   );
   const savedBooksQuerySnapshot = await getDocs(savedBooksQuery);
 
@@ -426,14 +426,13 @@ const getSavedBooksByIds = async (userIds: string[]) => {
   return savedBooks;
 };
 
-const getReviewsCollection = async (userIds: string[], bookIds: string[]) => {
+const getReviewsCollection = async (reviewIds: string[]) => {
   const reviewsCollectionRef = collection(db, "reviews");
 
   const reviewsQuery = query(
     reviewsCollectionRef,
-    where("userId", "in", userIds),
-    where("bookId", "in", bookIds),
-    limit(20)
+    where("__name__", "in", reviewIds),
+    limit(30)
   );
 
   const reviewsQuerySnapshot = await getDocs(reviewsQuery);
@@ -445,15 +444,31 @@ const getReviewsCollection = async (userIds: string[], bookIds: string[]) => {
   return reviews;
 };
 
+const mergeUserIdsWithBookIds = (savedBooks: IBookShelf[]) => {
+  const reviewIds: string[] = [];
+
+  savedBooks.forEach((book) => {
+    const userId = book.userId;
+    const bookIds = book.bookIds || [];
+
+    bookIds.forEach((bookId: string) => {
+      const reviewId = `${userId}_${bookId}`;
+      reviewIds.push(reviewId);
+    });
+  });
+
+  return reviewIds;
+};
+
 export const getFollowingFeed = async (userId: string) => {
   const followingIds = await getFollowingList(userId);
   const idsWithCurrentUser = [...followingIds, userId];
 
   try {
     const savedBooks = await getSavedBooksByIds(idsWithCurrentUser);
-    const allBookIds = savedBooks.flatMap((savedBook) => savedBook.bookIds);
+    const reviewIds = mergeUserIdsWithBookIds(savedBooks);
 
-    const reviews = await getReviewsCollection(idsWithCurrentUser, allBookIds);
+    const reviews = await getReviewsCollection(reviewIds);
     return reviews;
   } catch (error) {
     console.error("Something went wrong.", error);
