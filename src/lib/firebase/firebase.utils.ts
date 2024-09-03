@@ -499,3 +499,35 @@ export const getSpecificUserFeed = async (
     console.error("Something went wrong: ", error);
   }
 };
+
+export const getBookReview = async (bookId: string, userId: string) => {
+  const reviewId = `${userId}_${bookId}`;
+  const reviewRef = doc(db, "reviews", reviewId);
+  const reviewSnap = await getDoc(reviewRef);
+
+  if (!reviewSnap.exists()) return null;
+  const review = reviewSnap.data();
+
+  return review;
+};
+
+export const updateBookRating = async (
+  bookId: string,
+  userId: string,
+  newRating: number
+) => {
+  const reviewId = `${userId}_${bookId}`;
+  const reviewRef = doc(db, "reviews", reviewId);
+
+  try {
+    await updateDoc(reviewRef, {
+      rating: newRating,
+      actionStatus: "ratingAdded",
+      updatedAt: serverTimestamp(),
+    });
+    toast({ title: `Rating updated to ${newRating} stars!` });
+  } catch (error) {
+    console.error("Error updating review: ", error);
+    throw new Error("Couldn't add rating right now.");
+  }
+};

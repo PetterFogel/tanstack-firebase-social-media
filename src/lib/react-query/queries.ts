@@ -7,6 +7,7 @@ import {
   getSpecificUserFeed,
   getFollowingFeed,
   getUserBookshelf,
+  getBookReview,
   getUsers,
 } from "../firebase/firebase.utils";
 
@@ -64,5 +65,13 @@ export const useGetSpecificUserFeed = (userId: string) => {
     queryKey: [QUERY_KEYS.SPECIFIC_USER_FEED, userId],
     queryFn: () => getSpecificUserFeed(userId),
     enabled: !!userId,
+  });
+};
+
+export const useGetBookReview = (bookId: string, userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.BOOK_REVIEW, bookId, userId],
+    queryFn: () => getBookReview(bookId, userId),
+    enabled: !!bookId && !!userId,
   });
 };

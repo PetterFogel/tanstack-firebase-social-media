@@ -7,4 +7,5 @@ export enum QUERY_KEYS {
   IS_USER_FOLLOWING = "isUserFollowing",
   FOLLOWING_FEED = "followingFeed",
   SPECIFIC_USER_FEED = "specificUserFeed",
+  BOOK_REVIEW = "bookReview",
 }

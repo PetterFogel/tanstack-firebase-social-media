@@ -11,6 +11,7 @@ import {
   signInAccount,
   unfollowUser,
   followUser,
+  updateBookRating,
 } from "../firebase/firebase.utils";
 
 export const useCreateUserAccount = () => {
@@ -56,6 +57,9 @@ export const useAddBookToUserShelf = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_BOOK_SHELF],
       });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_REVIEW],
+      });
     },
   });
 };
@@ -72,6 +76,9 @@ export const useRemoveBookFromUserShelf = () => {
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_BOOK_SHELF],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_REVIEW],
       });
     },
   });
@@ -110,6 +117,30 @@ export const useUnfollowUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.IS_USER_FOLLOWING],
+      });
+    },
+  });
+};
+
+export const useUpdateBookRating = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      bookId,
+      userId,
+      rating,
+    }: {
+      bookId: string;
+      userId: string;
+      rating: number;
+    }) => updateBookRating(bookId, userId, rating),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.BOOK_REVIEW],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.SPECIFIC_BOOK],
       });
     },
   });

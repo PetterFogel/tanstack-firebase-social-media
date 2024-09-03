@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { IBookFeed } from "@/types/books";
 import { useAuthContext } from "@/context/AuthContext";
-import { Image, UserRound } from "lucide-react";
+import { Image, Star, UserRound } from "lucide-react";
 import { getTimeAgoHandler, sortBooksByAddedDate } from "@/lib/utils";
 
 interface Props {
@@ -25,7 +25,7 @@ const BookFeedList = ({ bookFeed }: Props) => {
       {sortedBooksbyDate?.map((item, idx: number) => (
         <div
           key={idx}
-          className="bg-white rounded-md shadow md:p-4 px-2 py-3 flex gap-4"
+          className="bg-white rounded-md shadow md:p-4 px-2 py-3 flex gap-2 md:gap-4"
         >
           <div>
             {currentUser && (
@@ -37,10 +37,30 @@ const BookFeedList = ({ bookFeed }: Props) => {
             )}
           </div>
           <div className="space-y-2 w-full">
-            <h3 className="text-sm md:text-base">
-              {displayUserName(item.userId)} added{" "}
-              <span className="font-bold">{item.bookTitle}</span> to the shelf
-            </h3>
+            {item.actionStatus === "ratingAdded" ? (
+              <h3 className="text-sm md:text-base flex items-center gap-1">
+                {displayUserName(item.userId)} rated{" "}
+                <span className="font-bold">{item.bookTitle}</span>{" "}
+                <span>
+                  <div className="flex">
+                    {Array.from({ length: item.rating }, (_, i) => (
+                      <Star
+                        key={i}
+                        size={18}
+                        fill="#e87400"
+                        className="text-yellow-500"
+                        strokeWidth={0}
+                      />
+                    ))}
+                  </div>
+                </span>
+              </h3>
+            ) : (
+              <h3 className="text-sm md:text-base">
+                {displayUserName(item.userId)} added{" "}
+                <span className="font-bold">{item.bookTitle}</span> to the shelf
+              </h3>
+            )}
             <div className="w-2/6 sm:w-1/5">
               <Link to={`/book/${item.bookId}`}>
                 {item.imageLinks?.thumbnail ? (

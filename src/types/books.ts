@@ -51,6 +51,7 @@ export interface IBookFeed {
     thumbnail: string;
     smallThumbnail: string;
   };
+  actionStatus: string;
   rating: number;
   reviewStatus: string;
   reviewText: string;

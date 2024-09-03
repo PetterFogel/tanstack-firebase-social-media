@@ -1,15 +1,17 @@
 import { toast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
-import {
-  useGetSpecificBook,
-  useCheckIfBookExistInShelf,
-} from "@/lib/react-query/queries";
+import { Separator } from "@/components/ui/separator";
 import { useAuthContext } from "@/context/AuthContext";
 import { LoaderCircle, Image } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  useCheckIfBookExistInShelf,
+  useGetSpecificBook,
+  useGetBookReview,
+} from "@/lib/react-query/queries";
+import StarRatingButton from "@/components/shared/StarRatingButton";
 import BookshelfButton from "@/components/shared/BookshelfButton";
 import MetaData from "@/components/shared/MetaData";
-import { Separator } from "@/components/ui/separator";
 
 const BookDetailsPage = () => {
   const navigate = useNavigate();
@@ -17,6 +19,11 @@ const BookDetailsPage = () => {
   const { currentUser } = useAuthContext();
 
   const { data: bookExist } = useCheckIfBookExistInShelf(
+    bookId || "",
+    currentUser?.id || ""
+  );
+
+  const { data: review } = useGetBookReview(
     bookId || "",
     currentUser?.id || ""
   );
@@ -94,6 +101,15 @@ const BookDetailsPage = () => {
                   />
                 )}
               </div>
+              {review && (
+                <div className="flex place-content-center">
+                  <StarRatingButton
+                    rating={review?.rating}
+                    bookId={book.id}
+                    userId={currentUser?.id || ""}
+                  />
+                </div>
+              )}
             </div>
             <div className="col-span-3 md:col-span-7 p-4 pt-0 md:p-0 space-y-3 md:space-y-3">
               <div>
